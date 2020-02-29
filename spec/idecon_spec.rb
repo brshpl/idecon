@@ -5,7 +5,8 @@ RSpec.describe Idecon do
     expect(Idecon::VERSION).not_to be nil
   end
 
-  it 'does something useful' do
-    expect(false).to eq(true)
+  it 'generating file' do
+    identicon = Idecon::Identicon.new('Lorem ipsum', 'tmp.png')
+    expect(identicon.generate).to be_a File
   end
 end
