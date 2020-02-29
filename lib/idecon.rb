@@ -6,6 +6,7 @@ require 'chunky_png'
 
 module Idecon
   class Error < StandardError; end
+
   class Identicon
     def initialize(user_name, path)
       @hash = Digest::MD5.hexdigest(user_name)
@@ -21,13 +22,14 @@ module Idecon
 
     private
 
-    # Create matrix, where 1 - coloured square, 0 - empty square
+    # Create matrix, where @colour - coloured square,
+    #                      [255, 255, 255] - empty square
     def create_matrix
       color
       @matrix = @hash.chars[0..24].map do |c|
         c = if (0..4).include?(c) || ('a'..'m').include?(c)
               @color
-            else [0, 0, 0]
+            else [255, 255, 255]
             end
         c
       end
@@ -35,10 +37,10 @@ module Idecon
 
     # Get color from hash
     def color
-      @color = @hash[24..32].scan(/([\w\d])([\w\d])([\w\d])/).map do |arr|
+      @color = @hash[23..32].scan(/([\w\d])([\w\d])([\w\d])/).map do |arr|
         color = 0
         arr.each_with_index do |c, i|
-          color += 10**i + (c[i].to_i(36) + 10).to_s[1]
+          color += 10**i + (c.to_i(36) + 10).to_s[1].to_i
         end
         color
       end
@@ -52,8 +54,7 @@ module Idecon
         @image.rect(square[0] * 50,       square[1] * 50,
                     (square[0] + 1) * 50, (square[1] + 1) * 50,
                     ChunkyPNG::Color::TRANSPARENT,
-                    ChunkyPNG::Color.rgb(color[0], color[1], color[2])
-        )
+                    ChunkyPNG::Color.rgb(color[0], color[1], color[2]))
       end
     end
 
