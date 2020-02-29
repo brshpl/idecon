@@ -2,6 +2,7 @@
 
 require 'idecon/version'
 require 'digest'
+require 'chunky_png'
 
 module Idecon
   class Error < StandardError; end
@@ -14,7 +15,8 @@ module Idecon
 
     def generate
       create_matrix
-
+      create_image
+      save_image(@path)
     end
 
     private
@@ -33,14 +35,30 @@ module Idecon
 
     # Get color from hash
     def color
-      @hash[24..32].scan(/(.)(.)(.)/).map do |arr|
+      @color = @hash[24..32].scan(/([\w\d])([\w\d])([\w\d])/).map do |arr|
         color = 0
         arr.each_with_index do |c, i|
           color += 10**i + (c[i].to_i(36) + 10).to_s[1]
         end
         color
       end
-      @color = color
+    end
+
+    # Create image using ChunkyPNG by painting squares
+    def create_image
+      @image = ChunkyPNG::Image.new(250, 250, ChunkyPNG::Color.rgb(0, 0, 0))
+      @matrix.each_with_index do |color, i|
+        square = [i / 5, i % 5]
+        @image.rect(square[0] * 50,       square[1] * 50,
+                    (square[0] + 1) * 50, (square[1] + 1) * 50,
+                    ChunkyPNG::Color::TRANSPARENT,
+                    ChunkyPNG::Color.rgb(color[0], color[1], color[2])
+        )
+      end
+    end
+
+    def save_image(path)
+      @image.save(path)
     end
   end
 end
