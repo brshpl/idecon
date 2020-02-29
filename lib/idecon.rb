@@ -40,7 +40,7 @@ module Idecon
       @color = @hash[23..32].scan(/([\w\d])([\w\d])([\w\d])/).map do |arr|
         color = 0
         arr.each_with_index do |c, i|
-          color += 10**i + (c.to_i(36) + 10).to_s[1].to_i
+          color += 10**i * (c.to_i(36) + 10).to_s[1].to_i
         end
         color
       end
