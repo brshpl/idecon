@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    idecon (0.1.1)
+    idecon (0.1.2)
       chunky_png
 
 GEM

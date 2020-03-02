@@ -8,10 +8,13 @@ module Idecon
   class Error < StandardError; end
 
   class Identicon
-    def initialize(user_name, path)
+    DEFAULT_PATH = 'default.png'
+    BACKGROUND_COLOR = [255, 255, 255].freeze
+
+    def initialize(user_name, path = DEFAULT_PATH)
       @hash = Digest::MD5.hexdigest(user_name)
       @path = path
-      @color = [0, 0, 0]
+      @color = color
     end
 
     def generate
@@ -25,25 +28,20 @@ module Idecon
     # Create matrix, where @colour - coloured square,
     #                      [255, 255, 255] - empty square
     def create_matrix
-      color
       @matrix = @hash.chars[0..24].map do |c|
-        c = if (0..4).include?(c) || ('a'..'m').include?(c)
-              @color
-            else [255, 255, 255]
-            end
-        c
+        c.to_i(36).odd? ? @color : BACKGROUND_COLOR
       end
     end
 
     # Get color from hash
     def color
-      @color = @hash[23..32].scan(/([\w\d])([\w\d])([\w\d])/).map do |arr|
+      @hash[23..32].scan(/([\w\d])([\w\d])([\w\d])/).map do |arr|
         color = 0
         # Convert every character to a two-digit number, then get second digit
         arr.each_with_index do |c, i|
           color += 10**i * (c.to_i(36) + 10).to_s[1].to_i
         end
-        color
+        color % 256
       end
     end
 
