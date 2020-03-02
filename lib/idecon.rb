@@ -53,11 +53,15 @@ module Idecon
                                     ChunkyPNG::Color.rgb(0, 0, 0))
       @matrix.each_with_index do |color, i|
         square = [i / 5, i % 5]
-        @image.rect(square[0]       * PIXEL_SIZE, square[1]       * PIXEL_SIZE,
-                    (square[0] + 1) * PIXEL_SIZE, (square[1] + 1) * PIXEL_SIZE,
-                    ChunkyPNG::Color::TRANSPARENT,
-                    ChunkyPNG::Color.rgb(color[0], color[1], color[2]))
+        draw_square(square, color)
       end
+    end
+
+    def draw_square(square, color)
+      @image.rect(square[0]       * PIXEL_SIZE, square[1]       * PIXEL_SIZE,
+                  (square[0] + 1) * PIXEL_SIZE, (square[1] + 1) * PIXEL_SIZE,
+                  ChunkyPNG::Color::TRANSPARENT,
+                  ChunkyPNG::Color.rgb(color[0], color[1], color[2]))
     end
 
     def save_image(path)
