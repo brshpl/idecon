@@ -8,6 +8,8 @@ module Idecon
   class Error < StandardError; end
 
   class Identicon
+    SQUARE_SIZE = 250
+    PIXEL_SIZE = SQUARE_SIZE / 5
     DEFAULT_PATH = 'default.png'
     BACKGROUND_COLOR = [255, 255, 255].freeze
 
@@ -39,7 +41,7 @@ module Idecon
         color = 0
         # Convert every character to a two-digit number, then get second digit
         arr.each_with_index do |c, i|
-          color += 10**i * (c.to_i(36) + 10).to_s[1].to_i
+          color += 10**i * c.to_i(36)
         end
         color % 256
       end
@@ -47,11 +49,12 @@ module Idecon
 
     # Create image using ChunkyPNG by painting squares
     def create_image
-      @image = ChunkyPNG::Image.new(250, 250, ChunkyPNG::Color.rgb(0, 0, 0))
+      @image = ChunkyPNG::Image.new(SQUARE_SIZE, SQUARE_SIZE,
+                                    ChunkyPNG::Color.rgb(0, 0, 0))
       @matrix.each_with_index do |color, i|
         square = [i / 5, i % 5]
-        @image.rect(square[0] * 50,       square[1] * 50,
-                    (square[0] + 1) * 50, (square[1] + 1) * 50,
+        @image.rect(square[0]       * PIXEL_SIZE, square[1]       * PIXEL_SIZE,
+                    (square[0] + 1) * PIXEL_SIZE, (square[1] + 1) * PIXEL_SIZE,
                     ChunkyPNG::Color::TRANSPARENT,
                     ChunkyPNG::Color.rgb(color[0], color[1], color[2]))
       end
